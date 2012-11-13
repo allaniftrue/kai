@@ -1,0 +1,99 @@
+@font-face {
+    font-family: 'museo-slab';
+    src: url('../font/museo_slab_300-webfont.eot');
+    src: url('../font/museo_slab_300-webfont.eot?#iefix') format('embedded-opentype'), url('../font/museo_slab_300-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'museo-slab';
+    src: url('../font/museo_slab_500-webfont.eot');
+    src: url('../font/museo_slab_500-webfont.eot?#iefix') format('embedded-opentype'), url('../font/museo_slab_500-webfont.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+body {
+    font-size: 14px;
+    line-height: 22px;
+    color: #4E443C;
+    background: #F0EFE7 url(../img/bg/body.jpg);
+    padding-top: 60px;
+    padding-bottom: 40px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: museo-slab, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+hr { 
+    display: block; 
+    height: 1px;
+    border: 0; 
+    border-top: solid 1px #E2E0D8;
+    margin: 1em 0; padding: 0; 
+}
+
+label.required:before {
+    content:"*";
+    color:red;
+    font-family:"Lucida Grande",Verdana,Arial,Helvetica,sans-serif;
+}
+label.ok {
+    background:url("../img/valid.gif") no-repeat;
+    padding-left:16px;
+}
+label.error {
+    color:#d00;
+    text-transform:none;
+    margin-left:6px;
+    display: inline
+}
+
+div.main {
+    background-color: #FCFCFA;
+    border: solid 1px #E2E0D8;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+    padding: 22px;
+    margin-bottom: 10px
+}
+
+.sidebar-nav {
+    padding: 9px 0;
+}
+
+span#reflink {
+    font-style: italic;
+    cursor: text;
+}
+
+
+div#avatar-holder {
+    width:150px;
+    height:150px;
+}
+
+div#uploader {
+    height:160px;
+    width:160px;
+    background: transparent url('../profile/default-inverse.gif') top left no-repeat;
+    color: #f4f4f4;
+    display: none;
+    position: absolute !important;
+    text-align: center;
+    padding-top:70px;
+}
+
+div#uploader input[type="file"] {
+    height:160px;
+}
