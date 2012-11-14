@@ -42,6 +42,7 @@ $route['default_controller'] = "home";
 $route['404_override'] = '';
 $route['ref/register'] = 'ref/register';
 $route['ref/(:any)'] = 'ref';
+$route['confirm/(:any)'] = 'confirm';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
