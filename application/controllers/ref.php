@@ -43,7 +43,7 @@ class Ref extends CI_Controller {
             
             $this->load->library('email');
             $this->load->library('Mlib_sec');
-            $this->load->helper('file');
+            $this->load->helper('string');
 
             $referrer = $this->input->post('referrer');
             $sponsor = $this->input->post('sponsor');
@@ -63,9 +63,18 @@ class Ref extends CI_Controller {
             $sql = $this->db->get_where('pre_users',array('username'=>trim($username)));
             $num_res = $sql->num_rows();
             
+            
             if($num_res > 0) {
                 echo json_encode(array('status'=>0,'id'=>'username','msg'=>"Username already in use"));
             } else {
+                
+                $sql = $this->db->get_where('pre_profile',array('email'=>trim($email)));
+                $num_res = $sql->num_rows();
+                
+                if($num_res > 0) {
+                    echo json_encode(array('status'=>0,'id'=>'email','msg'=>"Email already in use")); die();
+                }
+                
                 
                 $stored_answer = $this->session->userdata('answer');
                 
@@ -73,13 +82,15 @@ class Ref extends CI_Controller {
                     if(in_array($question,$stored_answer)) {
                         $is_human = TRUE;
                     } else {
-                        echo json_encode(array('status'=>0,'id'=>'question','msg'=>"You have provided a wrong answer"));
+                        $captcha = $this->captcha();
+                        echo json_encode(array('status'=>0,'id'=>'question','msg'=>"You have provided a wrong answer",'question'  =>  $captcha->question));
                     }
                 } else {
                     if($question === $stored_answer) {
                         $is_human = TRUE;
                     } else {
-                        echo json_encode(array('status'=>0,'id'=>'question','msg'=>"You have provided a wrong answer"));
+                        $captcha = $this->captcha();
+                        echo json_encode(array('status'=>0,'id'=>'question','msg'=>"You have provided a wrong answer",'question'  =>  $captcha->question));
                     }
                 }
                 
@@ -105,7 +116,7 @@ class Ref extends CI_Controller {
                                         'username'  =>  $username,
                                         'salt'      =>  $hashed_parts[2],
                                         'password'  =>  $hashed_parts[3],
-                                        'date'      => date('o-m-d', strtotime(now()))
+                                        'date'      => date('Y-m-d')
                         );
                         
                         $this->db->insert('pre_users',$array);
@@ -118,7 +129,7 @@ class Ref extends CI_Controller {
                             $token_data = array(
                                                     'id'    =>  $last_id,
                                                     'token' =>  $token,
-                                                    'date'  =>  date('o-m-d', strtotime(now()))
+                                                    'date'  =>  date('Y-m-d H:i:s')
                             );
                             $this->db->insert('pre_tokens',$token_data);
                             $affected_rows = $this->db->affected_rows();
@@ -151,17 +162,37 @@ class Ref extends CI_Controller {
                                         'firstname' =>  $firstname,
                                         'email'     =>  $email,
                                         'contact'   =>  $contact,
-                                        'address'   =>  $address
+                                        'address'   =>  $address,
+                                        'referrer'  =>  $referrer,
+                                        'sponsor'   =>  $sponsor
                         );
                         
                         $this->db->insert('pre_profile',$array);
                         $aff_rows = $this->db->affected_rows();
                         
                         if($aff_rows > 0) {
-                            if($mailed === TRUE) 
-                                echo json_encode(array('status'=>1,'msg'=>"Please check you email to verify your account"));
-                            else
-                                echo json_encode(array('status'=>1,'msg'=>"Your account was created but an error occured while sending the email"));
+                            if($mailed === TRUE) {
+                                
+                                $captcha = $this->captcha();
+                                
+                                echo json_encode(
+                                                    array(
+                                                            'status'    =>  1,
+                                                            'msg'       =>  "Please check you email to verify your account",
+                                                            'question'  =>  $captcha->question
+                                                    )
+                                );
+                                
+                            } else {
+          
+                                echo json_encode(
+                                                    array(
+                                                            'status'    =>  1,
+                                                            'msg'       =>  "Your account was created but an error occured while sending the email"
+                                                     )
+                                );
+                                
+                            }
                         } else {
                             echo json_encode(array('status'=>0,'msg'=>"There was an error while saving the information"));
                         }
