@@ -57,7 +57,7 @@
 </p>
 
 <p>
-    <label class="required" for="question"><strong><?=$question?> </strong></label>
+    <label class="required" for="question"><strong id="qholder"><?=$question?> </strong></label>
     <input type="text" class="input input-xxlarge span5" id="question" name="question" placeholder="Answer to question..." />
 </p>
 
