@@ -16,7 +16,7 @@ class Login extends CI_Controller {
 
 		if($csrf_session === $csrf_val) {
 			
-			$sql = $this->db->get_where('users', array('username'=>$username));
+			$sql = $this->db->get_where('users', array('username'=>$username,'confirmation'=>'1'));
 			$num_rows = $sql->num_rows();
 
 			if($num_rows === 1) {
@@ -40,11 +40,22 @@ class Login extends CI_Controller {
 
 					redirect(base_url()."dashboard", "refresh");
 				} else {
-					#show error invalid username/password
+					$array = array(
+                                                        "message"   =>  "Invalid Username/Password",
+                                                        "alert_type"=>  "error"
+                                        );
+                                        $this->session->set_userdata($array);
+                                        redirect(base_url(),"location");
 				}
 
 			} else {
-				#show error invalid username/password
+                            #show error invalid username/password
+                            $array = array(
+                                            "message"   =>  "Invalid Username/Password",
+                                            "alert_type"=>  "error"
+                            );
+                            $this->session->set_userdata($array);
+                            redirect(base_url(),"location");
 			}
 			
 			$this->session->unset_userdata('hash_value');
