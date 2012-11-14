@@ -43,6 +43,7 @@ $route['404_override'] = '';
 $route['ref/register'] = 'ref/register';
 $route['ref/(:any)'] = 'ref';
 $route['confirm/(:any)'] = 'confirm';
+$route['forgot/confirm/(:any)'] = "forgot/confirm";
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
