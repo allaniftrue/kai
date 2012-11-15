@@ -16,6 +16,11 @@
                         html:true
 		})
                 
+                $('[id^=tooltip-top]').tooltip({
+			placement:'top',
+                        html:true
+		})
+                
                 $('#contact,#newpassword').tooltip({
                     placement:'right',
                     trigger:'focus'

@@ -84,22 +84,21 @@
                                         success:function(response, xhr) {
                                             
                                             if(response.status === 0 && response.id === 'username') {
-                                                $('#'+response.id).css('border','1px solid red').focusin(function(){
-                                                    $('label.ok').remove()
-                                                    $('#save').button('reset')
-                                                    return false;
-                                                })
+                                                $('#'+response.id).focus()
+                                                $('label.ok').remove()
+                                                $('#save').button('reset')
                                             } else if(response.status === 0 && response.id != 'username' && response.id != ''){
-                                                $('#'+response.id).css('border','1px solid red').focusin(function(){
-                                                    $('label.ok').remove()
-                                                    $('#save').button('reset')
-                                                    return false;
-                                                })
+                                                $('#'+response.id).focus()
+                                                $('label.ok').remove()
+                                                $('#save').button('reset')
+                                                $('#qholder').empty().append(response.question[0])
                                             } else {
                                                 $('.modal-body').empty().append('<p>'+response.msg+'')
                                                 $('#myModal').modal("show")
                                                 $('label.ok').remove()
                                                 $('#save').button('reset')
+                                                $('form').clearForm()
+                                                $('#qholder').empty().append(response.question[0])
                                                 return false
                                             }
                                         },
