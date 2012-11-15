@@ -28,17 +28,16 @@
                     
                         $message = ! empty($message) ? $message : $this->session->userdata("message");
                         $alert_type = ! empty($alert_type) ? $alert_type : $this->session->userdata("status");
-                    
-                        if(! empty($message) && (is_numeric($alert_type) || $alert_type === 'error')) { 
-                            if($alert_type === 'error' || $alert_type == 0) {
+
+                        if(! empty($message) && (is_numeric($alert_type) || $alert_type === 'error' || $alert_type === 'success')) { 
+                            if($alert_type === 'error' || $alert_type === 0) {
                     ?>
                     <br /><br />
                     <div class="alert alert-error">
                         <i class="icon-exclamation-sign"></i> <?=$message?>
                     </div>
                     <?php
-                            } else {
-                                
+                        } else {
                     ?>
                     <br /><br />
                     <div class="alert alert-success">
@@ -46,12 +45,12 @@
                     </div>
                     <?php
                             
-                            }
-                            $array = array(
-                                "message"   =>  "",
-                                "alert_type"=>  ""
-                            );
-                            $this->session->set_userdata($array);
+                        }
+                        $array = array(
+                            "message"   =>  "",
+                            "alert_type"=>  ""
+                        );
+                        $this->session->set_userdata($array);
                     ?>
                     <?php
                         }
