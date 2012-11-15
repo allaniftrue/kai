@@ -3,7 +3,6 @@ class Ref extends CI_Controller {
 
 	public function __construct() {
 		parent::__construct();
-                $this->load->helper('captcha');
 	}
         
         public function captcha() {
@@ -25,17 +24,16 @@ class Ref extends CI_Controller {
             $sql = $this->db->get_where('pre_users', array('username'=>$ref_name));
             $num_res = $sql->num_rows();
             
-            if($num_res === 1) {
-                
-                $captcha = $this->captcha();
-
-                $data['question'] = $captcha->question;
+            $captcha = $this->captcha();
+            $data['question'] = $captcha->question;
+            
+            if($num_res === 1 || $ref_name !== FALSE) {
                 $data['refid'] = $sql->result();
                 $data['referrer'] = $ref_name;
                 $this->load->view('registration/registration_referral_view', $data);
                 
             } else {
-                
+                $this->load->view('registration/registration_view', $data);
             }
         }
         
@@ -68,6 +66,7 @@ class Ref extends CI_Controller {
                 echo json_encode(array('status'=>0,'id'=>'username','msg'=>"Username already in use"));
             } else {
                 
+                /*check if email is already in use*/
                 $sql = $this->db->get_where('pre_profile',array('email'=>trim($email)));
                 $num_res = $sql->num_rows();
                 
@@ -75,6 +74,17 @@ class Ref extends CI_Controller {
                     echo json_encode(array('status'=>0,'id'=>'email','msg'=>"Email already in use")); die();
                 }
                 
+                /*Check Referrer*/
+                $sql_referrer = $this->db->get_where("pre_users", array("username"=>$referrer,'status'=>'active','confirmation'=>'1'));
+                $num_res_referrer = $sql_referrer->num_rows();
+                
+                if($num_res_referrer != 1) { $referrer = NULL; } 
+                
+                /* check sponsor */
+                $sql_sponsor = $this->db->get_where("pre_users",array("username"=>$sponsor,'status'=>'active','confirmation'=>'1'));
+                $num_res_sponsor = $sql_sponsor->num_rows();
+
+                if($num_res_sponsor != 1) { $sponsor = NULL; } 
                 
                 $stored_answer = $this->session->userdata('answer');
                 
@@ -98,7 +108,7 @@ class Ref extends CI_Controller {
                     if(! empty($username) && ! empty($password) && ! empty($lastname) && ! empty($firstname) && ! empty($email) && ! empty($contact) && ! empty($address)) {
                         $hashed = $this->mlib_sec->create_hash($password);
                         $hashed_parts = explode(":", $hashed);
-                        $token = uniqid();
+                        $token = md5(uniqid(rand(), true));
                         $url =  parse_url(base_url());
                         $url = $url['host'];
                         
@@ -129,7 +139,8 @@ class Ref extends CI_Controller {
                             $token_data = array(
                                                     'id'    =>  $last_id,
                                                     'token' =>  $token,
-                                                    'date'  =>  date('Y-m-d H:i:s')
+                                                    'date'  =>  date('Y-m-d H:i:s'),
+                                                    'source'=>  "registration"
                             );
                             $this->db->insert('pre_tokens',$token_data);
                             $affected_rows = $this->db->affected_rows();
@@ -176,11 +187,11 @@ class Ref extends CI_Controller {
                                 $captcha = $this->captcha();
                                 
                                 echo json_encode(
-                                                    array(
-                                                            'status'    =>  1,
-                                                            'msg'       =>  "Please check you email to verify your account",
-                                                            'question'  =>  $captcha->question
-                                                    )
+                                                 array(
+                                                    'status'    =>  1,
+                                                    'msg'       =>  "Please check you email to verify your account, the link is valid only for 24 hours.",
+                                                    'question'  =>  $captcha->question
+                                                 )
                                 );
                                 
                             } else {
