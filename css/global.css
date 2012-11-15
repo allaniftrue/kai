@@ -122,3 +122,7 @@ div#uploader {
 div#uploader input[type="file"] {
     height:160px;
 }
+
+div.modal-body {
+    text-align: justify;
+}
