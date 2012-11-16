@@ -59,12 +59,12 @@ class Payments extends CI_Controller {
                     $ext = explode("/", $info);
                     force_download("transaction_recept".".".$ext[1],$file);
                 } else {
-                    die("<em>File does not exist</em>");
+                    show_404();
                 }
                 
             } else {
                 $this->Logsq->login_log("Forbidden access to attached transaction receipt");
-                die("<em>Forbidden Access</em>");
+                show_404();
             }
         }
         
@@ -142,6 +142,21 @@ class Payments extends CI_Controller {
                     );
             }
         }
+        
+        
+        
     
+        public function paymentcenters() {
+            $this->load->helper('array');
+            $payment_center = $this->input->post("paymentcenter");
+            
+            $this->db->distinct();
+            $this->db->select("payment_center");
+            $this->db->like("payment_center",$payment_center);
+            $sql = $this->db->get("pre_payments");
+            
+            echo json_encode(elements_only($sql->result_array(),"payment_center"));
+            
+        }
     
 }
