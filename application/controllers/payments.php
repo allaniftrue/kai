@@ -2,6 +2,7 @@
 class Payments extends CI_Controller {
     public function __construct() {
         parent::__construct();
+        $this->load->helper('file');
     }
     
     public function index() {
@@ -51,11 +52,15 @@ class Payments extends CI_Controller {
             if($num_res === 1) {
                 
                 $result = $sql->result();
-                $file = file_get_contents(FCPATH."attachments/".$result[0]->attachment);
-                $info = get_mime_by_extension(FCPATH."attachments/".$result[0]->attachment);
                 
-                $ext = explode("/", $info);
-                force_download("transaction_recept".".".$ext[1],$file);
+                if(file_exists(FCPATH."attachments/".$result[0]->attachment)) {
+                    $file = file_get_contents(FCPATH."attachments/".$result[0]->attachment);
+                    $info = get_mime_by_extension(FCPATH."attachments/".$result[0]->attachment);
+                    $ext = explode("/", $info);
+                    force_download("transaction_recept".".".$ext[1],$file);
+                } else {
+                    die("<em>File does not exist</em>");
+                }
                 
             } else {
                 $this->Logsq->login_log("Forbidden access to attached transaction receipt");
@@ -64,5 +69,79 @@ class Payments extends CI_Controller {
         }
         
     }
+    
+    public function upload() {
+
+            $path = FCPATH.'attachments/';
+            $the_file = $this->input->get('qqfile');
+
+            $the_file = explode('.', $the_file);
+            $the_file = array_filter($the_file, 'strlen');
+            $total = count($the_file);
+            $ext = $the_file[$total-1];
+
+            $the_file[0] = $filename = sha1($the_file[0].uniqid());
+            $the_file = $the_file[0].'.'.$ext;
+
+            if(save_file($path.$the_file)) {
+                
+                $array = array(
+                                "file"  =>  $the_file
+                );
+                $this->session->set_userdata($array);
+                
+                echo json_encode(
+                                    array(
+                                            "success"    =>  TRUE,
+                                            "filename"  =>  $this->session->userdata('file')
+                                    )
+                );
+                
+            } else {
+                echo json_encode(array('status'=>'Error', 'issue'=> $this->upload->display_errors('','')));
+            }
+        }
+        
+        public function unattach() {
+            
+            $filename = $this->input->post("file");
+            $path = FCPATH."attachments/";
+            $file = $path.$filename;
+            
+            if(file_exists($file)) {
+                
+                    if(unlink($file)) {
+
+                        $array = array(
+                                    "file"  =>  ""
+                        );
+                        $this->session->set_userdata($array);
+
+                        echo json_encode(
+                                            array(
+                                                    "status"    => 1
+                                            )
+                        );
+
+                    } else {
+                        echo json_encode(
+                                            array(
+                                                    "status"    =>  0,
+                                                    "title"     =>  "Error",
+                                                    "message"   =>  "Unable to remove file"
+                                            )
+                        );
+                    }
+            } else {
+                echo json_encode(
+                                        array(
+                                                "status"    =>  0,
+                                                "title"     =>  "Error",
+                                                "message"   =>  "File does not exist"
+                                        )
+                    );
+            }
+        }
+    
     
 }
