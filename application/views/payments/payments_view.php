@@ -9,6 +9,24 @@
           <h2>Payments</h2><br />
           
           <a href="javascript:void(0);"><i class="icon-plus"></i> Send Payment Information</a>
+          <div class="payment-form">
+            <div class="controls controls-row">
+              <input class="span3" type="text" placeholder="Payment Center" name="payment" id="payment">
+              <input class="span3" type="text" placeholder="Transaction ID" name="transaction" id="transaction">
+              <input class="span3" type="text" placeholder="Amount in Philippine Peso" name="amount" id="amount">
+            </div>
+            <div class="controls controls-row">
+                <textarea class="span9" placeholder="Message"></textarea>
+            </div>
+            <p>
+                <a href="javascript:void(0);" id="attachment" title="Attach the transaction receipt">
+                    <i class="icon-paper-clip" style="font-size:18px"></i> Attachment
+                </a>
+                <div id="messages"></div>
+            </p>
+            
+            <button class="btn btn-success" type="submit" data-loading-text="Sending Payment Information...">Send Payment Information</button>
+          </div>
           
           <table class="table table-bordered table-hover table-condensed">
               <thead>
