@@ -126,3 +126,11 @@ div#uploader input[type="file"] {
 div.modal-body {
     text-align: justify;
 }
+
+.payment-form {
+    margin: 20px 0
+}
+
+.attachment {
+    font-size: 12px;
+}
