@@ -8,16 +8,16 @@
         <div class="row-fluid">
           <h2>Payments</h2><br />
           
-          <a href="javascript:void(0);"><i class="icon-plus"></i> Send Payment Information</a>
-          <div class="payment-form">
-              <form id="receipt-info-form" method="post">
+          <a href="javascript:void(0);" id="add-payment-ico"><i class="icon-plus"></i> Send Payment Information</a>
+          <div class="payment-form hide">
+              <form id="receipt-info-form" method="post" action="">
                 <div class="controls controls-row">
                   <input class="span3" type="text" placeholder="* Payment Center" name="paymentcenter" id="paymentcenter">
                   <input class="span3" type="text" placeholder="* Transaction ID" name="transaction" id="transaction">
                   <input class="span3" type="text" placeholder="* Amount in Philippine Peso" name="amount" id="amount">
                 </div>
                 <div class="controls controls-row">
-                    <textarea class="span9" placeholder="Message (optional)"></textarea>
+                    <textarea class="span9" rows="4" placeholder="Message (optional)" id="message" name="message"></textarea>
                 </div>
                 <p>
                     <a href="javascript:void(0);" id="attachment" title="Attach the transaction receipt">
@@ -25,7 +25,7 @@
                     </a>
                     <div id="messages"></div>
                 </p>
-                <button class="btn btn-success" type="submit" data-loading-text="Sending Payment Information...">Send Payment Information</button>
+                <button class="btn btn-success" type="submit" data-loading-text="Sending Payment Information..." id="send">Send Payment Information</button>
               </form>
           </div>
           
@@ -55,7 +55,13 @@
                       <td style="font-size: 18px;">
                           <a href="javascript:void(0);" title="Click to see the message" id="message" data-id="<?=$payments[$i]->uid?>"><i class="icon-envelope"></i></a> &middot;
                           <a href="<?=base_url()?>payments/attachment/<?=$payments[$i]->uid?>" target="_blank" id="tooltip-top" title="Click to see transaction receipt"><i class="icon-picture"></i></a>
-                      
+                          <?php
+                            if($payments[$i]->status == 0) {
+                          ?>   
+                          &middot; <a href="javascript:void(0);" id="delete" data-id="<?=$payments[$i]->uid?>" title="Remove"><i class="icon-remove-circle"></i></a>
+                          <?php
+                            }
+                          ?>
                       </td>
                       <td>
                             <?=($payments[$i]->status == 0) ? "Unverified" : "Verified"?>
