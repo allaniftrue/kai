@@ -2,13 +2,21 @@
 class Payments extends CI_Controller {
     public function __construct() {
         parent::__construct();
+        
         $this->load->helper('file');
+        $this->load->library("Mlib_trac");
+        
+        $this->mlib_trac->trac_login();
     }
     
     public function index() {
         
-        $data['payments'] = $this->Paymentsq->my_payments();
+        $array = array(
+                        "file"  =>  ""
+        );
+        $this->session->set_userdata($array);
         
+        $data['payments'] = $this->Paymentsq->my_payments();
         $this->load->view("payments/payments_view",$data);
     }
     
@@ -41,12 +49,13 @@ class Payments extends CI_Controller {
         
         $attachment_id = $this->uri->segment(3);
         
+        
         if(is_numeric($attachment_id)) {
             
             $this->load->helper('download');
             $this->load->helper('file');
             
-            $sql = $this->db->get_where("pre_payments",array("id"=>$this->session->userdata('uid')));
+            $sql = $this->db->get_where("pre_payments", array("id"=>$this->session->userdata('uid'),"uid"=>$attachment_id));
             $num_res = $sql->num_rows();
             
             if($num_res === 1) {
@@ -116,7 +125,7 @@ class Payments extends CI_Controller {
                                     "file"  =>  ""
                         );
                         $this->session->set_userdata($array);
-
+                        
                         echo json_encode(
                                             array(
                                                     "status"    => 1
@@ -143,8 +152,147 @@ class Payments extends CI_Controller {
             }
         }
         
+        public function send() {
+            
+            $attachment = trim($this->session->userdata("file"));
+            $paymentcenter = $this->input->post('paymentcenter');
+            $transaction = $this->input->post("transaction");
+            $amount = $this->input->post('amount');
+            $message = $this->input->post('message');
+            
+            if(! empty($attachment)) {
+                $this->load->helper("array");
+                $this->load->library("email");
+                
+                $this->db->select("pre_profile.email");
+                $this->db->from('pre_users');
+                $this->db->where("pre_users.usertype","admin");
+                $this->db->join('pre_profile', 'pre_users.id = pre_profile.id');
+                $sql = $this->db->get();
+                $num_res = $sql->num_rows();
+                $result = $sql->result_array();
+                
+                
+                $e_message = "<p>A new transaction has been made.</p><p>Payment Center: $paymentcenter <br />Transaction: $transaction <br />Ammount: $amount <br />Message: <br />$message</p>";
+                $address = implode(",", elements_only($result, "email"));
+                
+                $config['mailtype'] = 'html';
+                $this->email->initialize($config);
+                $this->email->to("ajmcagadas@gmail.com");
+                $this->email->from('no-reply@'.base_host(), COMPANY_NAME. " Alert Mailer");
+                $this->email->subject(COMPANY_NAME." new transaction");
+                $this->email->message($e_message);
+            
+                if($this->email->send()) {
+                    $date = date("Y-m-d");
+                    $data = array(
+                                    "id"                =>  $this->session->userdata('uid'),
+                                    "payment_center"    =>  $paymentcenter,
+                                    "transaction"       =>  $transaction,
+                                    "amount"            =>  $amount,
+                                    "message"           =>  $message,
+                                    "attachment"        =>  $this->session->userdata('file'),
+                                    "status"            =>  '0',
+                                    "payment_date"      =>  $date
+                    );
+                    
+                    $this->db->trans_start();
+                    $this->db->trans_strict(FALSE);
+                    
+                    $this->db->insert('pre_payments', $data); 
+                    $aff_rows = $this->db->affected_rows();
+                    $last_id = $this->db->insert_id();
+                    $this->db->trans_complete();
+                    
+                    if($aff_rows > 0) {
+                        
+                        $array = array(
+                                    "file"  =>  ""
+                        );
+
+                        $this->session->set_userdata($array);
+
+                        echo json_encode(
+                                            array(
+                                                    "status"    =>  1,
+                                                    "title"     =>  "Success",
+                                                    "message"   =>  "Transaction saved.  Your transaction will be moderated in a short while",
+                                                    "lastid"    =>  $last_id,
+                                                    "date"      =>  date("M d, y", strtotime($date))
+                                            )
+                        );
+                    } else {
+                        echo json_encode(
+                                            array(
+                                                    "status"    =>  0,
+                                                    "title"     =>  "Error",
+                                                    "message"   =>  "Failed to save transaction.  Please retry the sending the payment information"
+                                            )
+                        );
+                    }
+                    
+                } else {
+                    echo json_encode(
+                                        array(
+                                                "status"    =>  0,
+                                                "title"     =>  "Error",
+                                                "message"   =>  "Failed to send an alert"
+                                        )
+                    );
+                }
+                   
+                
+            } else {
+                echo json_encode(
+                                        array(
+                                                "status"    =>  0,
+                                                "title"     =>  "Error",
+                                                "message"   =>  "Please attach the transaction receipt"
+                                        )
+                );
+            }
+            
+        }
         
-        
+        public function remove() {
+            
+            $payid = $this->input->post('payid');
+            
+            if(is_numeric($payid)) {
+                
+                $this->db->trans_start();
+                $this->db->delete('pre_payments', array('uid' => $payid)); 
+                $aff_rows = $this->db->affected_rows();
+                $this->db->trans_complete();
+                
+                if($aff_rows === 1) {
+                    echo json_encode(
+                                        array(
+                                                "status"    =>  1
+                                        )
+                    );
+                } else {
+                    echo json_encode(
+                                        array(
+                                                "status"    =>  0,
+                                                "title"     =>  "Error",
+                                                "message"   =>  "Unable to remove transaction message"
+                                        )
+                    );
+                }
+                
+                
+            } else {
+                echo json_encode(
+                                        array(
+                                                "status"    =>  0,
+                                                "title"     =>  "Error",
+                                                "message"   =>  "Unable to find transaction message"
+                                        )
+                );
+            }
+            
+        }
     
         public function paymentcenters() {
             $this->load->helper('array');
