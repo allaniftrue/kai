@@ -10,6 +10,8 @@ class Settings extends CI_Controller {
                 $this->load->library("Mlib_headers");
 		$this->load->library("Mlib_trac");
                 
+		$this->load->helper("file");
+                
 		$this->mlib_trac->trac_login();
 
 	}
@@ -19,36 +21,6 @@ class Settings extends CI_Controller {
 		$this->load->view('settings/profile_view',$data);
 	}
         
-        
-        
-       /* File Upload */    
-        private function __get_size() {
-            if (isset($_SERVER["CONTENT_LENGTH"])){
-                return (int)$_SERVER["CONTENT_LENGTH"];            
-            } else {
-                throw new Exception('Getting content length is not supported.');
-            }      
-        }
-
-        private function __save($file_n_path) {
-            $input = fopen("php://input", "r");
-            $temp = tmpfile();
-            $realSize = stream_copy_to_stream($input, $temp);
-            fclose($input);
-
-            if ($realSize != $this->__get_size()){            
-                return false;
-            }
-
-
-            $target = fopen($file_n_path, "w");        
-            fseek($temp, 0, SEEK_SET);
-            stream_copy_to_stream($temp, $target);
-            fclose($target);
-
-            return true;
-        }
-
         public function upload() {
 
             $path = FCPATH.'profile/';
@@ -62,7 +34,7 @@ class Settings extends CI_Controller {
             $the_file[0] = $filename = sha1($the_file[0].uniqid());
             $the_file = $the_file[0].'.'.$ext;
 
-            if($this->__save($path.$the_file)) {
+            if(save_file($path.$the_file)) {
 
                 $config['image_library']    = 'gd2';
                 $config['source_image']     = $path.$the_file;
@@ -216,12 +188,7 @@ class Settings extends CI_Controller {
                  */
                 echo json_encode(array("status"=>0,"message"=>"Wrong information provided."));
                 
-                
             }
         }
         
-        
-        
-        
-
 }
