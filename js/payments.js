@@ -1,5 +1,5 @@
 !function($){$(function(){
-    $('[id^=tooltip-top],#message,#attachment').tooltip({
+    $('[id^=tooltip-top],#message,#attachment,#delete').tooltip({
             placement:'top',
             html:true
     })
@@ -142,29 +142,49 @@
                                     })
                         },
                         submitHandler: function() {
-
+                                $('#send').button('loading')
+                                var paymentcenter_str = $('#paymentcenter').val()
+                                var transaction_str = $('#transaction').val()
+                                var amount_str = $('#amount').val()
+                                var message_str = $('#message').val()
                                 $.ajax({
                                         type:'POST',
-                                        url:base_url+'settings/save_profile',
+                                        url:base_url+'payments/send',
                                         dataType:'json',
                                         data: {
-                                            lastname:$('#lastname').val(),
-                                            firstname:$('#firstname').val(),
-                                            email:$('#email').val(),
-                                            contact:$('#contact').val(),
-                                            address:$('#address').val()
+                                            paymentcenter:paymentcenter_str,
+                                            transaction:transaction_str,
+                                            amount:amount_str,
+                                            message:message_str
                                         },
                                         success: function(response) {
-                                            $('.modal-body').empty().append('<p>'+response.message+'')
-                                            $('label.ok').remove()
+                                            
+                                            if(response.status == 1) {
+                                                addedFiles = 0
+                                                $('[id*=file-]').hide("slow").remove();
+                                                $fub.show()
+                                                $("form").clearForm()
+                                                $('tbody').prepend('<tr>'+'<td>'+response.lastid+'</td><td>'+response.date+'</td><td>'+transaction_str+'</td><td>'+amount_str+'</td><td>'+paymentcenter_str+'</td><td style="font-size: 18px;"><a href="javascript:void(0);" title="Click to see the message" id="message" data-id="'+response.lastid+'"><i class="icon-envelope"></i></a>&nbsp;&middot;&nbsp;<a href="'+base_url+'payments/attachment/'+response.lastid+'" target="_blank" id="tooltip-top" title="Click to see transaction receipt"><i class="icon-picture"></i></a>&nbsp;&middot;&nbsp;<a href="javascript:void(0);" id="delete" data-id="'+response.lastid+'" title="Remove"><i class="icon-remove-circle"></i></a></td><td>Unverified</td></tr>');
+                                                $("#myModalLabel").empty().append(response.title)
+                                                $('.modal-body').empty().append('<p>'+response.message+'</p>')
+                                                $('label.ok').remove()
+                                                $('#myModal').modal("show");
+                                            } else {
+                                                $("#myModalLabel").empty().append(response.title)
+                                                $('.modal-body').empty().append('<p>'+response.message+'</p>')
+                                                $('label.ok').remove()
+                                                $('#myModal').modal("show");
+                                            }
+                                            $('#send').button('reset')
                                         },
                                         error: function(response) {
-                                            $('.modal-body').empty().append(response.message)
+                                            $('.modal-body').empty().append(response)
+                                            $('#myModal').modal("show")
+                                            $('#send').button('reset')
                                         }
                                 })
-                                $('#myModal').modal("show");
                         },
-                        success: function(sample) {
+                        success: function() {
                             global.theElement.removeAttr("style")
                         }
     })
@@ -183,4 +203,53 @@
                         })
                 }
     })
+    
+    $('[id=delete]').live("click",function(){
+        var $this = $(this)
+        var $id = $(this).attr("data-id")
+        var conf = confirm('Are you sure you want to remove this transaction?')
+        if(conf) {
+            $.ajax({
+                type:'post',
+                url:base_url+"payments/remove",
+                dataType:"json",
+                data:{payid:$id},
+                success: function(response){
+                    if(response.status == 1) {
+                        $this.closest("tr").hide('slow')
+                    } else {
+                        $("#myModalLabel").empty().append(response.title)
+                        $('.modal-body').empty().append('<p>'+response.message+'</p>')
+                        $("#myModal").modal('show')
+                    }
+                },
+                error:function(){
+                    $("#myModalLabel").empty().append("Error")
+                    $('.modal-body').empty().append('<p>There was an error while processing your request</p>')
+                    $("#myModal").modal('show')
+                }
+            })
+        } else {
+            return false
+        }
+        
+    })
+    
+    $('#add-payment-ico').click(function(){
+        $('.payment-form').slideToggle("slow")
+    })
+    
+    $.fn.clearForm = function() {
+                    return this.each(function() {
+                        var type = this.type, tag = this.tagName.toLowerCase()
+                        if (tag == 'form')
+                                return $(':input',this).clearForm()
+                                if (type == 'text' || type == 'password' || tag == 'textarea')
+                                        this.value = ''
+                                else if (type == 'checkbox' || type == 'radio')
+                                        this.checked = false;
+                                else if (tag == 'select')
+                                        this.selectedIndex = -1
+                    })
+    }
 })}(window.jQuery)
