@@ -45,6 +45,7 @@ $route['ref/(:any)'] = 'ref';
 $route['confirm/(:any)'] = 'confirm';
 $route['forgot/confirm/(:any)'] = "forgot/confirm";
 $route['payments/attachment/(:num)'] = "payments/attachment";
+$route['referrals/(:num)'] = "referrals";
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
