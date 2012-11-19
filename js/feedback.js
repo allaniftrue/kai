@@ -2,7 +2,7 @@
             $("#feedback-form").validate({
                         rules: {
                                 subject: "required",
-                                message:"required",
+                                message:"required"
                         },
                         messages: {
                                 subject:"Please enter the subject",
