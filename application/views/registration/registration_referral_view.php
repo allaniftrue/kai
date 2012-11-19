@@ -25,7 +25,7 @@
     <input type="text" class="input input-xxlarge span5" id="username" name="username" />
 </p>
 <p>
-    <label class="required" for="password"><strong>Password <?=anchor_popup('https://accounts.google.com/PasswordHelp', '<i class="icon-question-sign" id="tooltip-right" title="Password Guidelines"></i>', $atts)?></strong></label>
+    <label class="required" for="password"><strong>Password <?=anchor_popup(base_url().'static/password.html', '<i class="icon-question-sign" id="tooltip-right" title="Password Guidelines"></i>', $atts)?></strong></label>
     <input type="password" class="input input-xxlarge span5" id="password" name="password" />
 </p>
 <p>
