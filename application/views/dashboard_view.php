@@ -7,8 +7,8 @@
           <div class="row-fluid">
             <div class="span4 well well-small">
               <center>
-                <h2>1,000</h2>
-                <p>Total Earning</p>
+                <h2><?=$payments_made?></h2>
+                <p>Payments Made</p>
               </center>
             </div><!--/span-->
             <div class="span4 well well-small">

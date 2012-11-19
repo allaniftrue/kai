@@ -22,7 +22,7 @@
                     <h2 class="form-signin-heading">Forgot Password</h2><br />
                     <input type="hidden" name="csrf_name" value="<?=$hash?>" />
                     <input type="text" name="email" class="input input-medium input-block-level" value="" placeholder="Email Address" />
-                    <input type="submit" value="Submit" name="submit" class="btn btn-medium" id="submit" data-loading-text="Processing..." /> &nbsp;&nbsp;<a href="<?=base_url()?>">Login</a>
+                    <input type="submit" value="Submit" name="submit" class="btn btn-medium" id="submit" data-loading-text="Processing..." /> &nbsp;&nbsp;<?php if($this->session->userdata('is_login') != TRUE){ ?><a href="<?=base_url()?>">Login</a> <?php } ?>
                     
                     <?php
                     
