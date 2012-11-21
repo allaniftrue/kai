@@ -39,7 +39,7 @@ class Forgot extends CI_Controller {
             $sql = $this->db->query("
                                         SELECT a.username, b.* FROM pre_users a, pre_profile b
                                         WHERE
-                                        a.id=b.id AND b.email='".$email."' AND a.confirmation='1'
+                                        a.id=b.id AND b.email=".$this->db->escape($email)." AND a.confirmation='1'
             ");
             $num_res = $sql->num_rows();
             
@@ -108,7 +108,7 @@ class Forgot extends CI_Controller {
             $sql = $this->db->query("
                                         SELECT a.*,b.email from pre_tokens a, pre_profile b
                                         WHERE 
-                                        a.token='".$token."' AND a.visited='0' AND a.date > DATE_SUB(NOW(),INTERVAL 24 HOUR) 
+                                        a.token=".$this->db->escape($token)." AND a.visited='0' AND a.date > DATE_SUB(NOW(),INTERVAL 24 HOUR) 
                                             AND a.source='forgot' AND b.id=a.id
             ");        
             

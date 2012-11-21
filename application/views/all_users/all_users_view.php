@@ -1,0 +1,71 @@
+<?php $this->load->view("header_view"); ?>
+<?php $this->load->view("top_menu/top_nav_view"); ?>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <?php 
+                if($this->session->userdata('usertype') === 'admin'):
+                    $this->load->view("sidebar/sidebar_admin_view"); 
+                else:
+                    $this->load->view("sidebar/sidebar_dashboard_view"); 
+                endif;
+        ?>
+        <div class="span9">
+            <div class="main">
+                <div class="row-fluid">
+                    <h2>All Users</h2><br />
+                    <table class="table table-bordered table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Contact</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Referrer</th>
+                            <th>Sponsors</th>
+                            <th>Account Type</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                                $total = count($all_users);
+                                for($i=0; $i<$total; $i++) {
+                        ?>
+                        <tr>
+                            <td><?=$all_users[$i]->lastname.', '.$all_users[$i]->firstname?></td>
+                            <td><?=$all_users[$i]->contact?></td>
+                            <td><?=safe_mailto($all_users[$i]->email)?></td>
+                            <td><?=$all_users[$i]->address?></td>
+                            <td><?=$all_users[$i]->referrer?></td>
+                            <td><?=$all_users[$i]->sponsor?></td>
+                            <td><?=($all_users[$i]->usertype === 'admin') ? "Administrator" : "Normal User"?></td>
+                            <td style="font-size:14px">
+                                <a href="javascript:void(0);" id="tooltip-top" class="modify" title="Add a referrer / sponsor" data-id="<?=$all_users[$i]->id?>"><i class="icon-edit"></i></a>
+                                &middot;
+                                <a href="javascript:void(0);" id="tooltip-top" class="promote" title="Toggle account type" data-id="<?=$all_users[$i]->id?>"><i class="icon-eye-open"></i></a>
+                                &middot;
+                                <a href="javascript:void(0);" id="tooltip-top" title="Remove User" class="remove" data-id="<?=$all_users[$i]->id?>">
+                                    <i class="icon-remove-circle"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <?php            
+                                }
+                        ?>
+                        <tr>
+                    </tbody>
+                    </table>
+                        
+                </div><!--/row-->
+            </div><!--/main-->
+        </div><!--/span-->
+    </div><!--/row-->
+    <hr>
+    <footer>
+        <p>&copy; <?= COMPANY_NAME ?> <?= date('Y') ?></p>
+    </footer>
+</div><!--/.fluid-container-->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="myModalLabel"></h3>
+    </div><div class="modal-body"></div><div class="modal-footer"><button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button></div></div>
+<?php $this->load->view("all_users/all_users_footer"); ?>

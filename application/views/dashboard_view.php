@@ -2,7 +2,13 @@
 <?php $this->load->view("top_menu/top_nav_view"); ?>
     <div class="container-fluid">
       <div class="row-fluid">
-        <?php $this->load->view("sidebar/sidebar_dashboard_view"); ?>
+        <?php 
+                if($this->session->userdata('usertype') === 'admin'):
+                    $this->load->view("sidebar/sidebar_admin_view"); 
+                else:
+                    $this->load->view("sidebar/sidebar_dashboard_view"); 
+                endif;
+        ?>
         <div class="span9">
           <div class="row-fluid">
             <div class="span4 well well-small">

@@ -17,7 +17,7 @@ class Home extends CI_Controller {
 		
 		if(empty($csrf_session)) {
 			$array = array(
-						'hash_value'=>$hash
+					'hash_value'=>$hash
 			);
 			
 			$this->session->set_userdata($array);

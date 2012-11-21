@@ -48,4 +48,25 @@ Class Paymentsq extends CI_Model {
         }
         return $total;
     }
+    
+    public function count_unmanaged_payments() {
+        if($this->session->userdata('usertype') === 'admin' && $this->session->userdata('is_login') === TRUE) {
+            
+            $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
+            
+            if ($this->cache->apc->is_supported()) {
+                if ( ! $unmanaged_payments = $this->cache->get('unmanaged_payments'))
+                {
+                    $this->db->where('status','0');
+                    $unmanaged_payments = $this->db->count_all_results('pre_payments');
+                    $this->cache->save('unmanaged_payments', $unmanaged_payments, 10000);
+                }
+                $unmanaged_payments = $this->cache->get('unmanaged_payments');
+            } else {
+                   $this->db->where('status','0');
+                   $unmanaged_payments = $this->db->count_all_results('pre_payments');
+            }
+            return $unmanaged_payments;
+        }
+    }
 }

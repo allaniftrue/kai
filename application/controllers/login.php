@@ -28,11 +28,11 @@ class Login extends CI_Controller {
 				
 				if($is_valid === TRUE) {
 
-					$this->load->model("Logsq");
 					$array = array(
-                                                        'uid'=>$result[0]->id,
-                                                        'username'=>$username,
-                                                        'is_login'=>TRUE
+                                                        'uid'       =>  $result[0]->id,
+                                                        'username'  =>  $username,
+                                                        'is_login'  =>  TRUE,
+                                                        'usertype'  =>  $result[0]->usertype
 					);
 					$this->session->set_userdata($array);
 					/* Log */

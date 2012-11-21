@@ -17,6 +17,9 @@ class Feedback extends CI_Controller {
     public function send() {
         
         $this->load->library("email");
+        $this->load->helper("array");
+        $this->load->model("Userq");
+        
         $subject = $this->input->post("subject");
         $msg = $this->input->post("message");
         
@@ -29,7 +32,7 @@ class Feedback extends CI_Controller {
             $this->email->initialize($config);
 
             $this->email->from('no-reply@'.base_host(), COMPANY_NAME. " Feedback Notifier");
-            $this->email->to('ajmcagadas@gmail.com'); 
+            $this->email->to(elements_only($this->Userq->get_administrators("array"), 'email')); 
 
             $this->email->subject($subject);
             $this->email->message($message);	

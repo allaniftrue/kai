@@ -7,17 +7,25 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Mlib_trac {
 
     public function __construct(){
-
+        
     }
 
     public function trac_login(){
-    	$ci =& get_instance();
-
+        $ci =& get_instance();
     	$is_login = $ci->session->userdata("is_login");
-
+        
     	if($is_login != TRUE) {
     		redirect(base_url(),"refresh");
-    	}
+    	} 
     }
-
+    
+    public function is_admin() {
+        $ci =& get_instance();
+    	$is_login = $ci->session->userdata("is_login");
+        $is_admin = $ci->session->userdata("usertype");
+        
+        if($is_login != TRUE || $is_admin != "admin") {
+            show_404();
+        }
+    }
 }

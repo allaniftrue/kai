@@ -139,19 +139,21 @@
                                                             success: function(response) {
                                                                 $('.modal-body').empty().append('<p>'+response.message+'')
                                                                 $('label.ok').remove()
+                                                                $('#myModal').modal("show")
                                                             },
                                                             error: function(response) {
                                                                 $('.modal-body').empty().append(response.message)
+                                                                $('#myModal').modal("show")
                                                             }
                                                     })
-                                                    $('#myModal').modal("show");
+                                                    
                                             },
                                             // set new class to error-labels to indicate valid fields
                                             success: function(label) {
                                                     // set &nbsp; as text for IE
                                                     label.html("&nbsp;").addClass("ok");
                                             }
-                    });//profile save
+                    })//profile save
                     
                     
                     /*account settings*/
