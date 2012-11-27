@@ -47,12 +47,15 @@
                     var listLn = response.list.length
                     var option_referrer = []
                     var option_sponsor = []
+                    var currentUsername = $td.parent().parents(':eq(2)').siblings(':eq(0)').text();
                     for(var i=0; i<listLn; i++) {
                         if(response.list[i] != response.referrer) {
-                            option_referrer.push('<option value="',response.list[i],'">',response.list[i],'</option>');
+                            if(response.list[i] != currentUsername)
+                                option_referrer.push('<option value="',response.list[i],'">',response.list[i],'</option>');
                         }
                         if(response.list[i] != response.sponsor) {
-                            option_sponsor.push('<option value="',response.list[i],'">',response.list[i],'</option>');
+                            if(response.list[i] != currentUsername)
+                                option_sponsor.push('<option value="',response.list[i],'">',response.list[i],'</option>');
                         }
                     }
                     
@@ -122,17 +125,31 @@
     $('.promote').live('click',function() {
         var $this = $(this);
         var $id=$this.attr('data-id');
-        $.ajax({
-            type:'post',
-            url:[base_url,'all_users/toggle_type'].join(''),
-            dataType:'json',
-            data:{id:$id},
-            success:function(response){
-                
-            },
-            error:function(){
-                
-            }
-        });
+        var conf = confirm('Are you sure you want to change the account type?');
+        if(conf) {
+            $.ajax({
+                type:'post',
+                url:[base_url,'all_users/toggle_type'].join(''),
+                dataType:'json',
+                data:{id:$id},
+                success:function(response){
+                    if(response.status === 1) {
+                        var utype = response.type === 'admin' ? 'Administrator' : 'Normal User';
+                        $this.parents(':eq(3)').prev().empty().append(utype).fadeIn('slow');
+                    } else {
+                        $('#myModalLabel').empty().append('Error')
+                        $('.modal-body').empty().append(['<p>',response.message,'</p>'].join(''));
+                        $('#myModal').modal("show")
+                    }
+                },
+                error:function(){
+                    $('#myModalLabel').empty().append('Error')
+                    $('.modal-body').empty().append('There was an error while processing your request');
+                    $('#myModal').modal("show")
+                }
+            });
+        } else {
+            return false;
+        }
     });
 })}(window.jQuery)

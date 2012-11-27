@@ -50,23 +50,58 @@ Class Paymentsq extends CI_Model {
     }
     
     public function count_unmanaged_payments() {
-        if($this->session->userdata('usertype') === 'admin' && $this->session->userdata('is_login') === TRUE) {
-            
-            $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
-            
-            if ($this->cache->apc->is_supported()) {
-                if ( ! $unmanaged_payments = $this->cache->get('unmanaged_payments'))
-                {
-                    $this->db->where('status','0');
-                    $unmanaged_payments = $this->db->count_all_results('pre_payments');
-                    $this->cache->save('unmanaged_payments', $unmanaged_payments, 10000);
-                }
-                $unmanaged_payments = $this->cache->get('unmanaged_payments');
-            } else {
-                   $this->db->where('status','0');
-                   $unmanaged_payments = $this->db->count_all_results('pre_payments');
-            }
-            return $unmanaged_payments;
-        }
+        
+        $this->db->where('status','0');
+        $unmanaged_payments = $this->db->count_all_results('pre_payments');
+        
+        return $unmanaged_payments;
+    }
+    
+    public function count_approved_payments() {
+        $this->db->where('status','1');
+        $unmanaged_payments = $this->db->count_all_results('pre_payments');
+        
+        return $unmanaged_payments;
+    }
+    
+    public function get_approved_transactions_n_userinfo($num,$offset) {
+        $sql = $this->db->query("
+                            SELECT a.username,b.*,c.* FROM pre_users a, pre_profile b,pre_payments c
+                            WHERE 
+                            a.id=b.id AND a.id=c.id AND c.status='1' ORDER BY c.payment_date DESC LIMIT $offset,$num
+        ");
+        
+        return $sql->result();
+    }
+    
+    public function get_unmanaged_transactions_n_userinfo($num,$offset) {
+        $sql = $this->db->query("
+                            SELECT a.username,b.*,c.* FROM pre_users a, pre_profile b,pre_payments c
+                            WHERE 
+                            a.id=b.id AND a.id=c.id AND c.status='0' ORDER BY c.payment_date ASC LIMIT $offset,$num
+        ");
+        
+        return $sql->result();
+    }
+    
+    public function get_userinfo_transactions($num,$offset) {
+        $sql = $this->db->query("
+                            SELECT a.username,b.*,c.* FROM pre_users a, pre_profile b,pre_payments c
+                            WHERE 
+                            a.id=b.id AND a.id=c.id ORDER BY c.status ASC LIMIT $offset,$num
+        ");
+        
+        return $sql->result();
+    }
+    
+    public function count_all_payments() {
+        
+        $sql = $this->db->query("
+                            SELECT a.username,b.*,c.* FROM pre_users a, pre_profile b,pre_payments c
+                            WHERE 
+                            a.id=b.id AND a.id=c.id
+        ");
+        
+        return $sql->num_rows();
     }
 }

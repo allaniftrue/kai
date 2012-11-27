@@ -18,7 +18,7 @@ body {
     font-size: 14px;
     line-height: 22px;
     color: #4E443C;
-    background: #F0EFE7 url(../img/bg/body.jpg);
+    background: #F0EFE7 url(../img/body.jpg);
     padding-top: 60px;
     padding-bottom: 40px;
 }
@@ -54,6 +54,10 @@ label.error {
     text-transform:none;
     margin-left:6px;
     display: inline
+}
+
+.text-right {
+    text-align: right !important
 }
 
 .form-signin {

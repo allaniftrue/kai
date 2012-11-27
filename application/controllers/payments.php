@@ -21,26 +21,37 @@ class Payments extends CI_Controller {
     }
     
     public function message() {
+        
         $message_id = $this->input->post('mid');
         $sql = $this->db->get_where("pre_payments",array("uid"=>$message_id));
         $num_res = $sql->num_rows();
+        $result = $sql->result();
         
-        if($num_res === 1) {
-            $result = $sql->result();
-            $message = ! empty($result[0]->message) ? $result[0]->message : "<em>No message included</em>";
-            $array = array(
-                            "title"     => "Message",
-                            "message"   =>  $message
-            );
-            
-            echo json_encode($array);
+        if($result[0]->id === $this->session->userdata('uid') || $this->session->userdata('usertype') === 'admin'){
+            if($num_res === 1) {
+
+                $message = ! empty($result[0]->message) ? $result[0]->message : "<em>No message included</em>";
+                $array = array(
+                                "title"     => "Message",
+                                "message"   =>  $message
+                );
+
+                echo json_encode($array);
+            } else {
+                $array = array(
+                                "title"     => "Message",
+                                "message"   => "<em>Unable to fetch message</em>"
+                );
+
+                echo json_encode($array);
+            }
         } else {
-            $array = array(
-                            "title"     => "Message",
-                            "message"   => "<em>Unable to fetch message</em>"
-            );
-            
-            echo json_encode($array);
+                $array = array(
+                                "title"     => "Message",
+                                "message"   => "<em>Unable to fetch message</em>"
+                );
+
+                echo json_encode($array);
         }
         
     }
@@ -49,14 +60,19 @@ class Payments extends CI_Controller {
         
         $attachment_id = $this->uri->segment(3);
         
-        
         if(is_numeric($attachment_id)) {
             
             $this->load->helper('download');
             $this->load->helper('file');
             
-            $sql = $this->db->get_where("pre_payments", array("id"=>$this->session->userdata('uid'),"uid"=>$attachment_id));
-            $num_res = $sql->num_rows();
+            if($this->session->userdata('usertype') === 'admin') {
+                $sql = $this->db->get_where("pre_payments", array('uid'=>$attachment_id));
+                $num_res = $sql->num_rows();
+            } else {
+                $sql = $this->db->get_where("pre_payments", array("id"=>$this->session->userdata('uid'),"uid"=>$attachment_id));
+                $num_res = $sql->num_rows();
+            }
+            
             
             if($num_res === 1) {
                 
@@ -65,6 +81,8 @@ class Payments extends CI_Controller {
                 if(file_exists(FCPATH."attachments/".$result[0]->attachment)) {
                     $file = file_get_contents(FCPATH."attachments/".$result[0]->attachment);
                     $info = get_mime_by_extension(FCPATH."attachments/".$result[0]->attachment);
+                    
+                    $this->Logsq->login_log("Downloaded attachment ". $result[0]->attachment . " with payment ID: ". $result[0]->uid);
                     $ext = explode("/", $info);
                     force_download("transaction_recept".".".$ext[1],$file);
                 } else {
@@ -173,7 +191,7 @@ class Payments extends CI_Controller {
                 $result = $sql->result_array();
                 
                 
-                $e_message = "<p>A new transaction has been made.</p><p>Payment Center: $paymentcenter <br />Transaction: $transaction <br />Ammount: $amount <br />Message: <br />$message</p>";
+                $e_message = "<p>A new transaction has been made.</p><p>Payment Center: $paymentcenter <br />Transaction: $transaction <br />Amount: $amount <br />Message: <br />$message</p>";
                 $address = implode(",", elements_only($result, "email"));
                 
                 $config['mailtype'] = 'html';

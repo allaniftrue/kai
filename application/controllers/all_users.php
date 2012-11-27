@@ -17,8 +17,10 @@ class All_users extends CI_Controller {
     public function remove() {
         $id = $this->input->post('id');
         
-        if(is_numeric($id) && !empty($id)) {
+        if(is_numeric($id)) {
             $array = array('id' => $id);
+            
+            $info = $this->Userq->user_profile($id);
             
             $sql = $this->db->delete('pre_users', $array); 
             $user_aff_row = $this->db->affected_rows();
@@ -27,6 +29,9 @@ class All_users extends CI_Controller {
             $profile_aff_row = $this->db->affected_rows();
             
             if($user_aff_row === 1 && $profile_aff_row === 1) {
+                
+                $this->Logsq->admin_log('Completely removed '.$info[0]->username);
+                
                 echo json_encode(array(
                                     'status'    =>  1,
                                     'message'   =>  "User successfully removed"
@@ -117,11 +122,53 @@ class All_users extends CI_Controller {
     
     public function toggle_type() {
         $id = $this->input->post('id');
+        $info = $this->Userq->user_profile($id);
         
-        if(is_numeric($id) && !empty($id)) {
-            $data = array(
+        if(is_numeric($id)) {
+            $this->db->select('usertype');
+            $sql = $this->db->get_where('pre_users',array('id'=>$id));
+            $num_rows = $sql->num_rows();
+            
+            if($num_rows === 1) {
+                
+                $result = $sql->result();
+                
+                if($result[0]->usertype === 'admin'){
+                    $account_type = 'regular';
+                    $data = array(
+                            'usertype'  =>  $account_type
+                    );
+                } elseif($result[0]->usertype === 'regular') {
+                    $account_type = 'admin';
+                    $data = array(
                             'usertype'  =>  'admin'
-            );
+                    );
+                }
+                $this->db->where('id',$id);
+                $this->db->update('pre_users',$data);
+                $aff_rows = $this->db->affected_rows();
+                
+                if($aff_rows === 1) {
+                    $this->Logsq->admin_log($info[0]->username . ' account changed to '. $account_type);
+                    echo json_encode(array(
+                                    'status'    =>  1,
+                                    'message'   =>  "Account type has been successfully updated",
+                                    'type'      =>  $account_type
+                    ));
+                } else {
+                    echo json_encode(array(
+                                    'status'    =>  0,
+                                    'message'   =>  "Unexpected error during update"
+                    ));
+                }
+                
+            } else {
+                    echo json_encode(array(
+                                    'status'    =>  0,
+                                    'message'   =>  "Unable to process request.  Please refresh the page"
+                    ));
+            }
+            
         } else {
             echo json_encode(array(
                                     'status'    =>  0,

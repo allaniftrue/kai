@@ -28,6 +28,7 @@ class Ref extends CI_Controller {
             $data['question'] = $captcha->question;
             
             if($num_res === 1 || $ref_name !== FALSE) {
+                
                 $data['refid'] = $sql->result();
                 $data['referrer'] = $ref_name;
                 $this->load->view('registration/registration_referral_view', $data);

@@ -12,18 +12,14 @@
         <div class="span9">
             <div class="main">
                 <div class="row-fluid">
-                    <h2>All Users</h2><br />
+                    <h2>Credits</h2><br />
                     <table class="table table-bordered table-hover table-condensed">
                     <thead>
                         <tr>
                             <th>Username</th>
                             <th>Name</th>
-                            <th>Contact</th>
                             <th>Email</th>
-                            <th>Address</th>
-                            <th>Referrer</th>
-                            <th>Sponsors</th>
-                            <th>Account Type</th>
+                            <th>Credits</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -35,31 +31,10 @@
                         <tr>
                             <td><?=$all_users[$i]->username?></td>
                             <td><?=$all_users[$i]->lastname.', '.$all_users[$i]->firstname?></td>
-                            <td><?=$all_users[$i]->contact?></td>
                             <td><?=safe_mailto($all_users[$i]->email)?></td>
-                            <td><?=$all_users[$i]->address?></td>
-                            <td><?=$all_users[$i]->referrer?></td>
-                            <td><?=$all_users[$i]->sponsor?></td>
-                            <td><?=($all_users[$i]->usertype === 'admin') ? "Administrator" : "Normal User"?></td>
+                            <td><?=$all_users[$i]->credits?></td>
                             <td style="font-size:14px">
-                                
-                                <div class="btn-group">
-                                    <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                                      Action
-                                      <span class="caret"></span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a href="javascript:void(0);" class="modify" data-id="<?=$all_users[$i]->id?>"><i class="icon-edit"></i> Modify Sponsor/Referrer</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" class="promote" data-id="<?=$all_users[$i]->id?>"><i class="icon-eye-open"></i> Toggle User Type</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0);" id="tooltip-top" title="Remove User" class="remove" data-id="<?=$all_users[$i]->id?>"><i class="icon-trash"></i> Delete User</a>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <a href="javascript:void(0);" data-id="<?=$all_users[$i]->id?>" id="add-credits" title="Click to manually add credits"><i class="icon-plus-sign"></i></a>
                             </td>
                         </tr>
                         <?php            
@@ -68,7 +43,6 @@
                         <tr>
                     </tbody>
                     </table>
-                        
                 </div><!--/row-->
             </div><!--/main-->
         </div><!--/span-->
@@ -81,4 +55,5 @@
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h3 id="myModalLabel"></h3>
     </div><div class="modal-body"></div><div class="modal-footer"><button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button></div></div>
-<?php $this->load->view("all_users/all_users_footer"); ?>
+
+<?php $this->load->view("credits/credits_footer"); ?>

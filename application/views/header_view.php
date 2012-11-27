@@ -5,7 +5,7 @@
     <title><?php
     
             $total_segments = $this->uri->total_segments();
-            $segment = $this->uri->segment($total_segments);
+            $segment = ! is_numeric($this->uri->segment($total_segments)) ? $this->uri->segment($total_segments) : $this->uri->segment($total_segments-1);
             
             if($total_segments === 0) {
                 echo "Administration Panel";

@@ -12,7 +12,7 @@
     $('a#message').live("click", function(){
         $.ajax({
             type:"post",
-            url:base_url+'payments/message',
+            url:[base_url,'payments/message'].join(''),
             dataType:"json",
             data:{mid:$(this).attr('data-id')},
             success:function(json){

@@ -12,13 +12,14 @@
         
       <li class="nav-header">Admin Menu</li>  
       <li class="<?=$segment==='all-users' ? 'active' : ''?>"><a href="<?=base_url()?>all-users"><i class="icon-globe"></i> All Users</a></li>
-      <li><a href="#"><i class="icon-asterisk "></i> Transactions&nbsp;&nbsp; <?php if($this->Paymentsq->count_unmanaged_payments() != 0){?><small><span class="badge badge-important"><?=$this->Paymentsq->count_unmanaged_payments()?></small><?php } ?></a></span></li>
-      
+      <li class="<?=($segment==='transactions'||$segment==='approved'||$segment==='pending') ? 'active' : ''?>"><a href="<?=base_url()?>transactions"><i class="icon-asterisk "></i> Transactions&nbsp;&nbsp; <?php $unmanaged = $this->Paymentsq->count_unmanaged_payments(); if( $unmanaged!= 0){?><small><span class="badge badge-important" id="total-unmanaged"><?=$unmanaged?></span></small><?php } ?></a></li>
+      <li class="<?=$segment==='credits' ? 'active' : ''?>">
+          <a href="<?=base_url()?>credits"><i class="icon-credit-card"></i> Credits</a>
+      </li>
       
       <li class="nav-header">User Menu</li>
       <li class="<?=$segment==='payments' ? 'active' : ''?>">
-          <a href="<?=base_url()?>payments" <?php if($has_paid === FALSE) { ?> title="Other menus will be shown after the payment has been verified" id="tooltip-bottom"<?php } ?>><i class="icon-money"></i> Payments</a></li>
-
+          <a href="<?=base_url()?>payments"><i class="icon-money"></i> Payments</a></li>
       <li><a href="#"><i class="icon-arrow-up"></i> Upgrade Account</a></li>
       <li><a href="#"><i class="icon-download"></i> Downloads</a></li>
       <li class="<?=$segment==='referrals' ? 'active' : ''?>"><a href="<?=base_url()?>referrals"><i class="icon-group"></i> Referrals</a></li>
