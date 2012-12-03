@@ -60,5 +60,11 @@ define("HASH_PBKDF2_INDEX", 3);
 
 
 define("COMPANY_NAME","MyClub88");
+
+
+define('MAX_UPLOAD',(int)(ini_get('upload_max_filesize')));
+define("MAX_POST_SIZE",(int)(ini_get('post_max_size')));
+define("MEMORY_LIMIT",(int)(ini_get('memory_limit')));
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

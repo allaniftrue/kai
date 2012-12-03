@@ -33,14 +33,13 @@
     $messages = $('#messages');
     var addedFiles = 0;
     var fileLimit = 1;
- 
     var uploader = new qq.FileUploaderBasic({
       button: $fub[0],
       action: base_url+'payments/upload',
       allowedExtensions: ['jpeg', 'jpg', 'gif', 'png'],
       sizeLimit: 20480000,
       onSubmit: function(id, fileName) {
-                                        $messages.append('<div id="file-' + id + '" class="alert" style="margin: 20px 0 0"></div>')
+        $messages.append('<div id="file-' + id + '" class="alert" style="margin: 20px 0 0"></div>')
       },
       onUpload: function(id, fileName) {
         $('#file-' + id).addClass('alert-info')
@@ -52,15 +51,10 @@
         if (loaded < total) {
           progress = Math.round(loaded / total * 100) + '% of ' + Math.round(total / 1024) + ' kB';
           $('#file-' + id).removeClass('alert-info')
-                          .html('<img src="client/loading.gif" alt="In progress. Please hold."> ' +
-                                'Uploading ' +
-                                '“' + fileName + '” ' +
-                                progress)
+                          .html(['<img src="',base_url,'img/preloader.gif" alt="In progress. Please hold."> Uploading “',fileName,'” ',progress].join(''));
         } else {
           $('#file-' + id).addClass('alert-info')
-                          .html('<img src="client/loading.gif" alt="Saving. Please hold."> ' +
-                                'Saving ' +
-                                '“' + fileName + '”')
+                          .html(['<img src="client/loading.gif" alt="Saving. Please hold."> Saving “',fileName,'”'].join(''));
         }
       },
       onComplete: function(id, fileName, responseJSON) {

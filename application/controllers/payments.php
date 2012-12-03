@@ -98,7 +98,9 @@ class Payments extends CI_Controller {
     }
     
     public function upload() {
-
+            /*@TODO
+             * Add a server side validation on uploaded file. valid = array(); if(in_array())
+             */
             $path = FCPATH.'attachments/';
             $the_file = $this->input->get('qqfile');
 

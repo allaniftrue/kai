@@ -34,7 +34,7 @@
                             <td><?=safe_mailto($all_users[$i]->email)?></td>
                             <td><?=$all_users[$i]->credits?></td>
                             <td style="font-size:14px">
-                                <a href="javascript:void(0);" data-id="<?=$all_users[$i]->id?>" id="add-credits" title="Click to manually add credits"><i class="icon-plus-sign"></i></a>
+                                <a href="javascript:void(0);" data-id="<?=$all_users[$i]->id?>" id="add-credits" title="Click to manually add credits"><i class="icon-plus-sign"></i></a>&nbsp;&middot;&nbsp;<a href="javascript:void(0);" data-id="<?=$all_users[$i]->id?>" id="sub-credits" title="Click to manually subtract credits"><i class="icon-minus-sign"></i></a>
                             </td>
                         </tr>
                         <?php            

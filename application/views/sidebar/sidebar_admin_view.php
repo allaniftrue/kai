@@ -16,6 +16,9 @@
       <li class="<?=$segment==='credits' ? 'active' : ''?>">
           <a href="<?=base_url()?>credits"><i class="icon-credit-card"></i> Credits</a>
       </li>
+      <li class="<?=$segment==='products' ? 'active' : ''?>">
+          <a href="<?=base_url()?>products"><i class="icon-upload"></i> Products</a>
+      </li>
       
       <li class="nav-header">User Menu</li>
       <li class="<?=$segment==='payments' ? 'active' : ''?>">

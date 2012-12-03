@@ -56,6 +56,10 @@ label.error {
     display: inline
 }
 
+.dummyfile input[type="text"] {
+   display: inline;
+}
+
 .text-right {
     text-align: right !important
 }
@@ -124,6 +128,23 @@ div#uploader {
 }
 
 div#uploader input[type="file"] {
+    height:160px;
+}
+div#productuploader {
+    height:90px;
+    width:160px;
+    background-color: #000;
+    zoom: 1;
+    filter: alpha(opacity=50);
+    opacity: 0.5;
+    color: #f4f4f4;
+    display: none;
+    position: absolute !important;
+    text-align: center;
+    padding-top:70px;
+}
+
+div#productuploader input[type="file"] {
     height:160px;
 }
 

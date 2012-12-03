@@ -27,7 +27,7 @@
                 <div id="uploader"><center><i class="icon-upload icon-white"></i> File Select</center></div>
                 <?php $img = ! empty($profile[0]->picture) ? $profile[0]->picture : "default.gif"; ?>
                 <img src="<?=base_url()?>profile/<?=$img?>" class="img-polaroid" />
-              </div> 
+            </div> 
               <div id="messages"></div>
               <br />
             </p>
